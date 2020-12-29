@@ -1,4 +1,4 @@
-# iot-credentials-puller
+# aws-iot-credentials-puller
 Simple AWS Serverless Application Model API to get the necessary credentials for the IoT Core device SDK usage.
 
 ### Getting started
