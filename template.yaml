@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Simple API to get the necessary credentials for the IoT Core device sdk usage.
+Parameters:
+  StageNameParameter:
+    Type: String
+  IAMSubRoleNameParameter:
+      Type: String
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: StageNameParameter
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - Version: '2012-10-17'
+          Statement: 
+          - Effect: Allow
+            Action: 
+              - iot:DescribeEndpoint
+            Resource: '*'
+        - Version: '2012-10-17'
+          Statement: 
+          - Effect: Allow
+            Action: 
+              - sts:AssumeRole
+            Resource: '*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          AWS_IAM_ROLE_NAME:
+            Ref: IAMSubRoleNameParameter
+      CodeUri: .
+      Handler: index.handler
+      Runtime: nodejs12.x
+      MemorySize: 128
+      Timeout: 3
